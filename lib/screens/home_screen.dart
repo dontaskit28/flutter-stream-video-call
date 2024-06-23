@@ -48,7 +48,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         // userToken: userToken,
         tokenLoader: (userId) async {
-          print("Testing....... $userId");
           return await getUserToken(
             userId: userId,
             name: name,
@@ -62,8 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
         id: getCallId,
         callType: StreamCallType(),
       );
-      final result = await call.getOrCreate();
-      debugPrint("Call created: ${result.getDataOrNull()}");
+      await call.getOrCreate();
       if (!context.mounted) {
         return;
       }
@@ -77,12 +75,10 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ).then((value) {
         if (StreamVideo.isInitialized()) {
-          debugPrint("Disconnecting call...");
           StreamVideo.reset();
         }
       });
     } catch (e) {
-      debugPrint('Error joining or creating call: $e');
       debugPrint(e.toString());
     }
   }
@@ -101,17 +97,14 @@ class _HomeScreenState extends State<HomeScreen> {
     Map<String, String> headers = {
       'Content-type': 'application/json',
     };
-    debugPrint('Request body: $body');
     final response = await http.post(
       headers: headers,
       url,
       body: json.encode(body),
     );
-    print("Testing....... ${response}");
     if (response.statusCode == 200) {
       return jsonDecode(response.body)['token'];
     } else {
-      debugPrint('Testing......: ${response.body}');
       throw Exception('Failed to get user token');
     }
   }
